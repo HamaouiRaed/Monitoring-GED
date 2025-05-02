@@ -1,0 +1,21 @@
+BASES_LIST = [
+    {"id": 1, "name": "CARTHAGO", "description": "CARTHAGO", "status": 1},
+    {"id": 2, "name": "COMPTA", "description": "COMPTA", "status": 1},
+    {"id": 3, "name": "COMPTA0", "description": "COMPTA0", "status": 1},
+    {"id": 4, "name": "COMPTA2", "description": "COMPTA2", "status": 1},
+    {"id": 5, "name": "CONTRATS", "description": "CONTRATS", "status": 1},
+    {"id": 6, "name": "COURTERM", "description": "COURTERM", "status": 1},
+    {"id": 7, "name": "DASD", "description": "DASD", "status": 1},
+    {"id": 8, "name": "DEMO", "description": "DEMO", "status": 0},
+    {"id": 9, "name": "FCUBS", "description": "FCUBS", "status": 1},
+    {"id": 10, "name": "GARANTIE", "description": "GARANTIE", "status": 1},
+    {"id": 11, "name": "MONPROD", "description": "MONPROD", "status": 1},
+    {"id": 12, "name": "PERS", "description": "PERS", "status": 1},
+    {"id": 13, "name": "PRODMON", "description": "PRODMON", "status": 1},
+    {"id": 14, "name": "SPECIMEN", "description": "SPECIMEN", "status": 1},
+    {"id": 15, "name": "SPECIMFC", "description": "SPECIMFC", "status": 1},
+    {"id": 16, "name": "SPECIMFE", "description": "SPECIMFE", "status": 1},
+    {"id": 17, "name": "STD0", "description": "STD0", "status": 1},
+    {"id": 18, "name": "STD01", "description": "STD01", "status": 1},
+    {"id": 19, "name": "TEST", "description": "TEST", "status": 0}
+]
