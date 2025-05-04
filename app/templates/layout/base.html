@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+
+    {% include 'layout/header.html' %}
+
+    <div class="flex min-h-screen">
+        {% include 'layout/sidebar.html' %}
+
+        <main class="flex-1 p-6">
+            {% include 'layout/cards.html' %}
+
+            <!-- Hidden sections to toggle -->
+            <div id="basesTable" class="hidden shadow-lg bg-white p-4 rounded-md mt-4">
+                {% include 'layout/basesTable.html' %}
+            </div>
+
+            <div id="domainesTable" class="hidden shadow-lg bg-white p-4 rounded-md mt-4">
+                {% include 'layout/domainesTable.html' %}
+            </div>
+
+            <div id="usersTable" class="hidden shadow-lg bg-white p-4 rounded-md mt-4">
+                {% include 'layout/usersTable.html' %}
+            </div>
+        </main>
+    </div>
+
+    {% include 'layout/footer.html' %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const cardTableMap = {
+                basesCard: 'basesTable',
+                domainesCard: 'domainesTable',
+                UsersCard: 'usersTable'
+            };
+    
+            Object.entries(cardTableMap).forEach(([cardId, tableId]) => {
+                const card = document.getElementById(cardId);
+                const table = document.getElementById(tableId);
+    
+                card.addEventListener('click', () => {
+                    // Hide all tables
+                    Object.values(cardTableMap).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el && !el.classList.contains('hidden')) {
+                            el.classList.add('hidden');
+                        }
+                    });
+    
+                    // Show the clicked card's table
+                    if (table) {
+                        table.classList.remove('hidden');
+                    }
+                });
+            });
+        });
+    </script>
+    
+
+</body>
+
+</html>

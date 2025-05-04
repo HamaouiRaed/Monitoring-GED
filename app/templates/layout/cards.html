@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Stats</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-gray-200 text-gray-900">
+
+    <main class="flex items-center justify-center p-10">
+        <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-6 w-full max-w-7xl">
+            
+            <!-- Users Tile -->
+            <div  id="UsersCard" class="flex items-center p-6 bg-gradient-to-r from-blue-500 to-blue-700 shadow-lg rounded-lg transition-shadow duration-300 hover:shadow-2xl hover:from-blue-600 hover:to-blue-800 cursor-pointer">
+                <div class="flex items-center justify-center bg-blue-200 h-16 w-16 rounded-full shadow-md">
+                    <i class="fas fa-users text-blue-700 text-2xl"></i>
+                </div>
+                <div class="ml-4 flex flex-col">
+                    <span class="text-2xl font-semibold text-white" id="userCount">...</span>
+                    <span class="text-gray-200">Total Utilisateurs</span>
+                </div>
+            </div>
+
+            <!-- Bases Tile -->
+            <div id="basesCard" class="flex items-center p-6 bg-gradient-to-r from-yellow-400 to-yellow-600 shadow-lg rounded-lg transition-shadow duration-300 hover:shadow-2xl hover:from-yellow-500 hover:to-yellow-700 cursor-pointer">
+                <div class="flex items-center justify-center bg-yellow-200 h-16 w-16 rounded-full shadow-md">
+                    <i class="fas fa-database text-yellow-700 text-2xl"></i>
+                </div>
+                <div class="ml-4 flex flex-col">
+                    <span class="text-2xl font-semibold text-white" id="baseCount">...</span>
+                    <span class="text-gray-200">Bases Enregistrées</span>
+                </div>
+            </div>
+
+            <!-- Domaines Tile -->
+            <div id="domainesCard" class="flex items-center p-6 bg-gradient-to-r from-green-400 to-green-600 shadow-lg rounded-lg transition-shadow duration-300 hover:shadow-2xl hover:from-green-500 hover:to-green-700 cursor-pointer">
+                <div class="flex items-center justify-center bg-green-200 h-16 w-16 rounded-full shadow-md">
+                    <i class="fas fa-globe text-green-700 text-2xl"></i>
+                </div>
+                <div class="ml-4 flex flex-col">
+                    <span class="text-2xl font-semibold text-white" id="domainesCount">...</span>
+                    <span class="text-gray-200">Domaines</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const endpoints = {
+                userCount: "/api/users/count",
+                baseCount: "/api/bases/count",
+                domainesCount: "/api/domaines/count",
+            };
+
+            for (const [key, url] of Object.entries(endpoints)) {
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        const value = Object.values(data)[0];
+                        document.getElementById(key).innerText = value;
+                    })
+                    .catch(err => {
+                        document.getElementById(key).innerText = "Erreur";
+                        console.error(err);
+                    });
+            }
+        });
+    </script>
+</body>
+</html>

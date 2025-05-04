@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Stats</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+    <div class="min-h-screen flex flex-col bg-gray-50">
+        <!-- Main Content Area -->
+        <main class="flex-1 p-6 overflow-x-auto">
+            <div class="shadow-2xl rounded-2xl overflow-hidden border border-gray-200 bg-white w-full">
+                <table class="min-w-full table-auto">
+                    <thead class="bg-gradient-to-r from-blue-500 to-blue-700 text-white">
+                        <tr>
+                            <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider">User ID</th>
+                            <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider">Nom</th>
+                            <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider">Identifiant</th>
+                            <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider">Role</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body" class="text-gray-700 text-sm">
+                        <!-- Dynamic rows -->
+                    </tbody>
+                </table>
+                <!-- Pagination -->
+                <div class="flex justify-center items-center m-6 space-x-3">
+                    <button id="prevBtn" class="px-6 py-2 bg-gray-100 hover:bg-blue-500 text-gray-700 hover:text-white font-medium rounded-lg transition duration-200 disabled:opacity-50">
+                        ◀️ Précédent
+                    </button>
+                    <span id="pageInfo" class="text-sm text-gray-600 font-medium"></span>
+                    <button id="nextBtn" class="px-6 py-2 bg-gray-100 hover:bg-blue-500 text-gray-700 hover:text-white font-medium rounded-lg transition duration-200 disabled:opacity-50">
+                        Suivant ▶️
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const tbody = document.getElementById("users-table-body");
+            const prevBtn = document.getElementById("prevBtn");
+            const nextBtn = document.getElementById("nextBtn");
+            const pageInfo = document.getElementById("pageInfo");
+
+            const pageSize = 10; // Number of items per page
+            let currentPage = 1;
+            let usersData = []; // To hold the user data
+
+            function renderTablePage(page) {
+                tbody.innerHTML = "";
+                const start = (page - 1) * pageSize;
+                const end = start + pageSize;
+                const pageData = usersData.slice(start, end);
+
+                pageData.forEach((user, index) => {
+                    const row = document.createElement("tr");
+                    row.className = `${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} border-b hover:bg-gray-200 transition duration-300 ease-in-out`;
+
+                    row.innerHTML = `
+                        <td class="py-4 px-6 font-medium">${user.id}</td>
+                        <td class="py-4 px-6">${user.name}</td>
+                        <td class="py-4 px-6 truncate whitespace-nowrap overflow-ellipsis max-w-xs">${user.description}</td>
+                        <td class="py-4 px-6">
+                            <span class="${user.status === 1 ? 'bg-green-500' : 'bg-red-500'} text-white px-3 py-1 rounded-full text-xs font-semibold">
+                                ${user.status === 1 ? 'Activé' : 'Désactivé'}
+                            </span>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                pageInfo.textContent = `Page ${currentPage} sur ${Math.ceil(usersData.length / pageSize)}`;
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = end >= usersData.length;
+            }
+
+            prevBtn.addEventListener("click", () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTablePage(currentPage);
+                }
+            });
+
+            nextBtn.addEventListener("click", () => {
+                if ((currentPage * pageSize) < usersData.length) {
+                    currentPage++;
+                    renderTablePage(currentPage);
+                }
+            });
+
+            // Fetch data from the API and populate the table
+            fetch("/api/users")
+                .then(response => response.json())
+                .then(data => {
+                    usersData = data;
+                    renderTablePage(currentPage);
+                })
+                .catch(error => {
+                    console.error("Erreur de chargement des users :", error);
+                });
+        });
+    </script>
+</body>
+</html>

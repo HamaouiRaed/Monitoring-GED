@@ -1,5 +1,5 @@
 BASES_LIST = [
-    {"id": 1, "name": "CARTHAGO", "description": "CARTHAGO", "status": 1},
+    {"id": 1, "name": "CARTHAGO", "description": "CARTHAGO",  "status": 1},
     {"id": 2, "name": "COMPTA", "description": "COMPTA", "status": 1},
     {"id": 3, "name": "COMPTA0", "description": "COMPTA0", "status": 1},
     {"id": 4, "name": "COMPTA2", "description": "COMPTA2", "status": 1},

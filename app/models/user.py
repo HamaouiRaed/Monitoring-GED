@@ -1,25 +1,30 @@
+import bcrypt
 from app import db
-from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(db.Model):
+    # Your existing User model fields
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    username = db.Column(db.String(100), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(100))
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    role = db.Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
-    role = db.Column(db.String(50), default='user')  # Optional
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        """Hashes the password using bcrypt and stores it in the database."""
+        salt = bcrypt.gensalt()  # Generate a salt for bcrypt hashing
+        self.password_hash = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        """Checks if the provided password matches the stored hash."""
+        return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
 
     def to_dict(self):
+        """Converts the User object into a dictionary for easy serialization."""
         return {
-            "id": self.id,
-            "name": self.name,
-            "username": self.username,
-            "email": self.email,
-            "role": self.role
+            'id': self.id,
+            'name': self.name,
+            'username': self.username,
+            'email': self.email,
+            'role': self.role
         }

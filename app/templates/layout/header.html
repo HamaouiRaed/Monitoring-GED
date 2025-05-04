@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>UBCI - Dashboard Archivage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+</head>
+
+<body>
+    <header>
+        <div class="header-left">
+            <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="UBCI Logo">
+            <h1>UBCI - Dashboard Archivage</h1>
+        </div>
+        <div class="header-right">
+            <div class="user-dropdown" onclick="toggleUserMenu()">
+                <span class="user-icon">👤</span>
+                <span class="user-name">{{ user.username }} - {{ user.role }}</span>
+                <i class="fas fa-caret-down"></i>
+                <div class="user-menu" id="userMenu">
+                    <a href="#" onclick="handleLogout(event)">Se déconnecter</a>
+                </div>
+            </div>
+            <button onclick="toggleDarkMode()" id="darkToggle" class="dark-btn">🌙</button>
+        </div>
+    </header>
+
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark");
+            const btn = document.getElementById("darkToggle");
+            btn.innerHTML = document.body.classList.contains("dark") ? "☀️" : "🌙";
+        }
+
+        function toggleUserMenu() {
+            const dropdown = document.querySelector(".user-dropdown");
+            dropdown.classList.toggle("active");
+            document.addEventListener("click", function (e) {
+                if (!dropdown.contains(e.target)) {
+                    dropdown.classList.remove("active");
+                }
+            }, { once: true });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const menuButton = document.getElementById("hamburgerBtn");
+            const menuSlide = document.getElementById("menuSlide");
+            if (menuButton && menuSlide) {
+                menuButton.addEventListener("click", () => {
+                    menuSlide.classList.toggle("open");
+                });
+            }
+        });
+
+        function handleLogout(event) {
+            event.preventDefault();
+
+            fetch('/logout', {
+                method: 'GET',
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = "/login"; // update path as needed
+                } else {
+                    console.error("Erreur lors de la déconnexion.");
+                }
+            })
+            .catch(error => {
+                console.error("Erreur réseau :", error);
+            });
+        }
+    </script>
+</body>
+</html>

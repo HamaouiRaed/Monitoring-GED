@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Stats</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+    <div class="overflow-x-auto my-6">
+        <div class="shadow-2xl rounded-2xl overflow-hidden border border-gray-200 w-full">
+            <table class="min-w-full table-auto">
+                <thead class="bg-gradient-to-r from-blue-500 to-blue-700 text-white">
+                    <tr>
+                        <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider">Base ID</th>
+                        <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider">Nom</th>
+                        <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider">Description</th>
+                        <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="bases-table-body" class="text-gray-700 text-sm">
+                    <!-- Dynamic rows go here -->
+                </tbody>
+            </table>
+
+            <!-- Pagination Controls -->
+            <div class="flex justify-center items-center m-6 space-x-3">
+                <button id="prevBtn" class="px-6 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg transition hover:bg-blue-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed">
+                    ◀️ Précédent
+                </button>
+                <span id="pageInfo" class="text-sm text-gray-600 font-medium"></span>
+                <button id="nextBtn" class="px-6 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg transition hover:bg-blue-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed">
+                    Suivant ▶️
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const tbody = document.getElementById("bases-table-body");
+            const prevBtn = document.getElementById("prevBtn");
+            const nextBtn = document.getElementById("nextBtn");
+            const pageInfo = document.getElementById("pageInfo");
+
+            const pageSize = 20; // Number of items per page
+            let currentPage = 1; // Start with the first page
+            let basesData = [];
+
+            // Function to render the current page of data
+            function renderTablePage(page) {
+                tbody.innerHTML = ""; // Clear the existing table rows
+                const totalPages = Math.ceil(basesData.length / pageSize);
+                const start = (page - 1) * pageSize;
+                const end = Math.min(start + pageSize, basesData.length);
+                const pageData = basesData.slice(start, end);
+
+                // Log to debug values
+                console.log(`Rendering page ${page}`);
+                console.log(`totalPages: ${totalPages}, start: ${start}, end: ${end}`);
+                console.log(`Data shown on page:`, pageData);
+
+                // If no data available
+                if (pageData.length === 0) {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `<td colspan="4" class="py-6 text-center text-gray-500">Aucune donnée disponible</td>`;
+                    tbody.appendChild(row);
+                } else {
+                    // Otherwise, render the data
+                    pageData.forEach((base, index) => {
+                        const row = document.createElement("tr");
+                        row.className = `${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} border-b hover:bg-gray-200 transition duration-300 ease-in-out`;
+
+                        row.innerHTML = `
+                            <td class="py-4 px-6 font-medium">${base.id}</td>
+                            <td class="py-4 px-6">${base.name}</td>
+                            <td class="py-4 px-6 truncate whitespace-nowrap overflow-ellipsis max-w-xs">${base.description}</td>
+                            <td class="py-4 px-6">
+                                <span class="${base.status === 1 ? 'bg-green-500' : 'bg-red-500'} text-white px-3 py-1 rounded-full text-xs font-semibold">
+                                    ${base.status === 1 ? 'Activé' : 'Désactivé'}
+                                </span>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+
+                pageInfo.textContent = `Page ${currentPage} sur ${totalPages}`;
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
+
+                // Ensure buttons are visible
+                prevBtn.style.display = 'inline-block';
+                nextBtn.style.display = 'inline-block';
+            }
+
+            // Event listener for Previous button
+            prevBtn.addEventListener("click", () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    console.log("Clicked Previous. Current page:", currentPage); // Log the current page
+                    renderTablePage(currentPage);
+                }
+            });
+
+            // Event listener for Next button
+            nextBtn.addEventListener("click", () => {
+                const totalPages = Math.ceil(basesData.length / pageSize);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    console.log("Clicked Next. Current page:", currentPage); // Log the current page
+                    renderTablePage(currentPage);
+                }
+            });
+
+            // Fetch data from backend API
+            fetch("/api/bases")
+                .then(response => response.json())
+                .then(data => {
+                    basesData = data; // Store the fetched data
+                    console.log("Data fetched:", basesData); // Log fetched data
+                    currentPage = 1;  // Reset to page 1 when new data is loaded
+                    renderTablePage(currentPage); // Render the first page
+                })
+                .catch(error => {
+                    console.error("Erreur de chargement des bases :", error);
+                    tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-red-500">Erreur de chargement des données</td></tr>`;
+                    pageInfo.textContent = "";
+                    prevBtn.disabled = true;
+                    nextBtn.disabled = true;
+                    prevBtn.style.display = 'none'; // Hide buttons if there's an error
+                    nextBtn.style.display = 'none'; // Hide buttons if there's an error
+                });
+        });
+    </script>
+</body>
+</html>
