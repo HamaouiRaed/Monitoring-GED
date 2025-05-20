@@ -1,10 +1,48 @@
-<aside class="w-64 bg-[#132649] text-white p-4">
-    <nav>
-        <ul class="space-y-4">
-            <li><a href="/dashboard" class="hover:underline">🏠 Dashboard</a></li>
-            <li><a href="/admin-panel" class="hover:underline">🛠 Admin Panel</a></li>
-            <li><a href="/register" class="hover:underline">👥 Manage Users</a></li>
-            <li><a href="#" onclick="logout()" class="hover:underline text-red-300">🚪 Logout</a></li>
-        </ul>
-    </nav>
+<aside class="w-64 bg-[#007F73] text-white p-4">
+  <nav>
+    <ul class="space-y-4">
+
+      <!-- Visible à tous -->
+      <li><a href="/dashboard" class="hover:underline">🏠 Dashboard</a></li>
+
+      <!-- Visible uniquement par admin -->
+      {% if user.role == 'admin' %}
+        <li><a href="{{ url_for('admin_bp.manage_users') }}" class="hover:underline">👥 Manage Users</a></li>
+        <li><a href="{{ url_for('files.manage_files') }}" class="hover:underline">🗂️ Manage Files</a></li>
+      {% endif %}
+
+      <li>
+{% set open_state = 'open' if active_page in ['fusion', 'automate'] else '' %}
+
+<li>
+  <details class="group" {{ open_state }}>
+    <summary class="cursor-pointer hover:underline flex items-center justify-between">
+      <span>📁 Logs Archivage</span>
+      <span class="group-open:rotate-90 transition-transform">&#9654;</span>
+    </summary>
+    <ul class="ml-4 mt-2 space-y-2 text-sm">
+      <li>
+        <a href="{{ url_for('logs.logs_journal_fusion') }}"
+           class="{% if active_page == 'fusion' %}text-yellow-300 font-semibold{% else %}hover:underline{% endif %}">
+          📄 Journal Fusion
+        </a>
+      </li>
+      <li>
+        <a href="{{ url_for('logs.logs_automate') }}"
+           class="{% if active_page == 'automate' %}text-yellow-300 font-semibold{% else %}hover:underline{% endif %}">
+          🤖 Automate GED
+        </a>
+      </li>
+    </ul>
+  </details>
+</li>
+
+
+
+
+      <!-- Streamlit -->
+      <li><a href="http://localhost:8501" target="_blank" class="hover:underline">📊 Analyse Streamlit</a></li>
+
+    </ul>
+  </nav>
 </aside>

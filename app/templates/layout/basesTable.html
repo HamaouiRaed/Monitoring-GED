@@ -16,9 +16,10 @@
             <table class="min-w-full table-auto">
                 <thead class="bg-gradient-to-r from-blue-500 to-blue-700 text-white">
                     <tr>
-                        <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider">Base ID</th>
+                        <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider">Application ID</th>
                         <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider">Nom</th>
                         <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider">Description</th>
+                        <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider">Nombre de documents</th>
                         <th class="py-4 px-6 text-left text-xs font-bold uppercase tracking-wider">Status</th>
                     </tr>
                 </thead>
@@ -47,7 +48,7 @@
             const nextBtn = document.getElementById("nextBtn");
             const pageInfo = document.getElementById("pageInfo");
 
-            const pageSize = 20; // Number of items per page
+            const pageSize = 21; // Number of items per page
             let currentPage = 1; // Start with the first page
             let basesData = [];
 
@@ -79,6 +80,7 @@
                             <td class="py-4 px-6 font-medium">${base.id}</td>
                             <td class="py-4 px-6">${base.name}</td>
                             <td class="py-4 px-6 truncate whitespace-nowrap overflow-ellipsis max-w-xs">${base.description}</td>
+                             <td class="py-4 px-6 truncate whitespace-nowrap overflow-ellipsis max-w-xs">${base.count}</td>
                             <td class="py-4 px-6">
                                 <span class="${base.status === 1 ? 'bg-green-500' : 'bg-red-500'} text-white px-3 py-1 rounded-full text-xs font-semibold">
                                     ${base.status === 1 ? 'Activé' : 'Désactivé'}

@@ -1,5 +1,5 @@
 
-from flask import Blueprint, render_template, session, redirect, url_for, jsonify
+from flask import Blueprint, render_template
 from flask_jwt_extended import current_user
 
 card = Blueprint("cards", __name__)

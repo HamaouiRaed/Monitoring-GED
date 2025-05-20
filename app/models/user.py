@@ -1,13 +1,14 @@
 import bcrypt
 from app import db
+from flask_login import UserMixin
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     # Your existing User model fields
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    role = db.Column(db.String(50), unique=True, nullable=False)
+    role = db.Column(db.String(50), nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
 
     def set_password(self, password):

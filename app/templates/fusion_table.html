@@ -1,0 +1,46 @@
+{% extends "layout/base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<script src="https://cdn.tailwindcss.com"></script>
+
+<body class="bg-gray-100 p-10 text-sm font-sans">
+  <h1 class="text-xl font-bold text-center mb-6 text-green-700">📊 Statistiques Journal Fusion</h1>
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white rounded shadow">
+      <thead class="bg-green-600 text-white">
+        <tr>
+          <th class="px-4 py-2">Date</th>
+          <th class="px-4 py-2">Référence document</th>
+          <th class="px-4 py-2">Fichiers Traités</th>
+          <th class="px-4 py-2">Erreur</th>
+        </tr>
+      </thead>
+      <tbody id="fusionTableBody" class="text-center divide-y divide-gray-200 bg-white"></tbody>
+    </table>
+  </div>
+
+  <script>
+    fetch('/api/fusion-table')  // ✅ Correction ici : "fetch" au lieu de "etch"
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.getElementById("fusionTableBody");
+        data.forEach(row => {
+          const errorColor = row.erreur === "Pas d'erreur" ? "text-gray-500 italic" : "text-red-600 font-semibold";
+          tbody.innerHTML += `
+            <tr>
+              <td class="px-4 py-2">${row.date}</td>
+              <td class="px-4 py-2">${row.base}</td>
+              <td class="px-4 py-2">${row.fichiers}</td>
+              <td class="px-4 py-2 ${errorColor}">${row.erreur}</td>
+            </tr>
+          `;
+        });
+      })
+      .catch(error => {
+        console.error("Erreur lors du chargement des données fusion :", error);
+      });
+  </script>
+</body>
+{% endblock %}

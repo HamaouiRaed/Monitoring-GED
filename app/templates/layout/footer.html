@@ -1,3 +1,21 @@
 <footer class="bg-white shadow text-center p-4">
-    <p class="text-sm">© 2025 My Dashboard App</p>
+    <p class="text-sm">© 2025 UBCI - Union bancaire pour le commerce et l'industrie</p>
+    <script>
+const menuButton = document.getElementById("hamburgerBtn");
+const menuSlide = document.getElementById("menuSlide");
+menuButton.addEventListener("click", () => {
+    menuSlide.classList.toggle("open");
+});
+
+function toggleUserMenu() {
+    const dropdown = document.querySelector(".user-dropdown");
+    dropdown.classList.toggle("active");
+    document.addEventListener("click", function (e) {
+        if (!dropdown.contains(e.target)) {
+            dropdown.classList.remove("active");
+        }
+    }, { once: true });
+}
+</script>
+
 </footer>

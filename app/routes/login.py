@@ -1,53 +1,57 @@
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session
-from app import db
+from flask import Blueprint, request, jsonify, session, render_template
+from flask_login import login_user as flask_login_user
 from app.models.user import User
 
 login = Blueprint("login", __name__)
 
-# Login route to authenticate user and store user information in the session
+# ✅ Route GET : Affichage du formulaire HTML
+@login.route('/login', methods=['GET'])
+def login_page():
+    return render_template("login.html")
+
+# ✅ Route POST : Traitement de la connexion
 @login.route('/login', methods=['POST'])
-def login_user():
+def handle_login():
     try:
-        # Get the username and password from the request JSON
-        data = request.get_json()
-        print(f"Received data: {data}")  # Debug: Check what data was received
+        # 🔍 Accepter JSON (frontend JS) ou form classique
+        if request.is_json:
+            data = request.get_json()
+        else:
+            data = request.form
 
         username = data.get('username')
         password = data.get('password')
 
-        # Validate if both username and password are provided
         if not username or not password:
-            print(f"Missing username or password")  # Debug
             return jsonify({"error": "Nom d'utilisateur ou mot de passe manquant."}), 400
 
-        # Fetch user from the database by username
         user = User.query.filter_by(username=username).first()
 
-        # Check if user exists and if password matches
         if not user or not user.check_password(password):
-            print(f"Invalid username or password")  # Debug
             return jsonify({"error": "Nom d'utilisateur ou mot de passe invalide."}), 401
 
-        # Store user information in the session
-        session['user'] = {
-            'id': user.id,
-            'username': user.username,
-            'role': user.role
-        }
-        print(f"User logged in: {user.username}")  # Debug: Log the username
+        # ✅ Authentification Flask-Login
+        flask_login_user(user)
 
-        # Send response with success message and dashboard redirect URL
-        return jsonify({
+
+        # ✅ Enregistrement session (si nécessaire pour autres logiques)
+        session['username'] = user.username
+        session['role'] = user.role
+        session['user_id'] = user.id
+
+        # ✅ Préparation de la réponse
+        response = jsonify({
             "message": "Connexion réussie.",
-            "redirect_url": "/dashboard",  # Add redirect URL for the dashboard
+            "redirect_url": "/dashboard" if user.role == "user" else "/admin",
             "user": {
                 "id": user.id,
                 "username": user.username,
                 "role": user.role
             }
-        }), 200
+        })
+
+        return response, 200
 
     except Exception as e:
-        print(f"Error: {str(e)}")  # Debug: Log any exception
+        print("Erreur serveur:", str(e))
         return jsonify({"error": f"Erreur serveur: {str(e)}"}), 500
-

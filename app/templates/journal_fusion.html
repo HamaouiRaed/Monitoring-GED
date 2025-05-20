@@ -1,0 +1,143 @@
+
+{% extends "layout/base.html" %}
+
+{% block title %}Logs Archivage{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- 🔢 Cartes de résumé -->
+    {% if fusion_data and fusion_data|length > 0 %}
+   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 mb-6">
+
+    <!-- Carte Succès -->
+    <div class="bg-gradient-to-r from-green-400 to-green-600 text-white p-6 rounded-xl shadow-md flex items-center justify-between">
+        <div class="flex items-center">
+            <div class="text-4xl mr-4">✅</div>
+            <div>
+                <div class="text-2xl font-bold">{{ success_total }}</div>
+                <div class="text-sm">Fichiers traités avec succès</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carte Échecs -->
+    <div class="bg-gradient-to-r from-red-400 to-red-600 text-white p-6 rounded-xl shadow-md flex items-center justify-between">
+        <div class="flex items-center">
+            <div class="text-4xl mr-4">❌</div>
+            <div>
+                <div class="text-2xl font-bold">{{ failure_total }}</div>
+                <div class="text-sm">Fichiers en échec</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+    {% endif %}
+
+
+
+   <!-- 🔎 Formulaire de recherche -->
+<form method="POST" class="bg-white p-6 rounded-xl shadow-md grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+
+    <!-- 📅 Date -->
+    <div>
+        <label for="dateInput" class="block text-sm font-medium text-gray-700 mb-1">📅 Filtrer par Date</label>
+        <input type="date" name="date" id="dateInput"
+               value="{{ document_filter or '' }}"
+               class="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-teal-500 focus:border-teal-500">
+    </div>
+
+    <!-- 📁 Sélectionner le fichier -->
+    <div>
+        <label for="logTypeSelect" class="block text-sm font-medium text-gray-700 mb-1">📁 Sélectionner le fichier</label>
+        <select name="log_type" id="logTypeSelect"
+                class="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-teal-500 focus:border-teal-500">
+            {% for log_file in available_logs %}
+                <option value="{{ log_file }}" title="{{ log_file }}" {% if selected_type == log_file %}selected{% endif %}>
+                    📁 {{ log_file }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- 🏷️ Filtrer par Base -->
+    <div>
+        <label for="base_filter" class="block text-sm font-medium text-gray-700 mb-1">🏷️ Filtrer par Base</label>
+        <select name="base_filter" id="base_filter"
+                class="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-teal-500 focus:border-teal-500">
+            <option value="">-- Toutes les bases --</option>
+            {% for base in unique_bases %}
+                <option value="{{ base }}" {% if base_filter == base %}selected{% endif %}>{{ base }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- 🔍 Bouton Rechercher -->
+    <div class="flex items-end">
+        <button type="submit"
+                class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded shadow transition">
+            🔍 Rechercher
+        </button>
+    </div>
+    {% if error_message %}
+    <div class="flex items-center gap-2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative shadow-sm mt-4">
+        <svg class="w-5 h-5 text-red-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm.707-11.707a1 1 0 00-1.414 0L7 9.586 5.707 8.293a1 1 0 10-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z"
+                  clip-rule="evenodd" />
+        </svg>
+        <span class="text-sm font-medium">{{ error_message }}</span>
+    </div>
+{% endif %}
+
+
+</form>
+
+
+    <!-- 📥 Bouton téléchargement -->
+    {% if selected_type and selected_type.startswith("journal") and fusion_data is not none and not fusion_data.empty %}
+    <a href="{{ url_for('logs.download_csv', log_type=selected_type) }}"
+       class="inline-block mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded shadow">
+        <i class="fa fa-download"></i> Télécharger les logs en CSV
+    </a>
+    {% endif %}
+
+    <!-- 📊 Résumé Fusion -->
+{% if show_results %}
+    <div class="mt-6 bg-white shadow p-4 rounded">
+        <h3 class="text-lg font-bold mb-2">🗂️ Résumé du Journal Fusion</h3>
+
+        <table class="w-full border border-gray-300 text-sm">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-4 py-2 border">Date</th>
+                    <th class="px-4 py-2 border">Référence document</th>
+                    <th class="px-4 py-2 border">Lot</th>
+                    <th class="px-4 py-2 border">Statut</th>
+                    <th class="px-4 py-2 border">Fichiers Reçus</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in fusion_data %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-2 border">{{ row['Date'] }}</td>
+                    <td class="px-4 py-2 border">{{ row['Référence document'] }}</td>
+                    <td class="px-4 py-2 border">{{ row['Lot'] }}</td>
+                    <td class="px-4 py-2 border">
+                        {% if row['Statut'] == 'Succès' %}
+                            <span class="text-green-600 font-semibold">{{ row['Statut'] }}</span>
+                        {% else %}
+                            <span class="text-red-600 font-semibold">{{ row['Statut'] }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-2 border">{{ row['FichiersReçus'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+     {% else %}
+      <p class="mt-4 text-gray-600">🔍 Aucune donnée fusion disponible pour ce fichier.</p>
+    {% endif %}
+</div>
+{% endblock %}

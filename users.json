@@ -1,0 +1,26 @@
+{
+    "admin": {
+        "password": "admin123",
+        "role": "admin"
+    },
+    "iheb": {
+        "password": "iheb1234",
+        "role": "user"
+    },
+    "kenza": {
+        "password": "kenza1234",
+        "role": "user"
+    },
+    "raed": {
+        "password": "123456raed",
+        "role": "admin"
+    },
+    "user": {
+        "password": "user123",
+        "role": "user"
+    },
+    "zoubair": {
+        "password": "13579zouba",
+        "role": "admin"
+    }
+}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Streamlit</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f5;
+        }
+        .top-bar {
+            background-color: #007F73;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .top-bar h2 {
+            margin: 0;
+        }
+        .top-bar a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        iframe {
+            width: 100%;
+            height: calc(100vh - 60px);
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h2>📊 UBCI - Dashboard des Logs</h2>
+        <a href="{{ url_for('index') }}">🏠 Retour à l'accueil</a>
+    </div>
+    <iframe src="http://localhost:8501"></iframe>
+</body>
+</html>

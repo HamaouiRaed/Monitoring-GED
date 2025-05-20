@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>UBCI – Gestion des Utilisateurs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #007F73;
+            --accent-color: #00B8A9;
+            --danger-color: #e74c3c;
+            --light-bg: #f4f6f8;
+            --font-color: #1e2d2f;
+            --radius: 12px;
+            --shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--font-color);
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 32px;
+            box-shadow: var(--shadow);
+        }
+
+        header .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        header img {
+            height: 42px;
+        }
+
+        .user-toggle {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background-color: white;
+            color: var(--font-color);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+            font-weight: 600;
+        }
+
+        .user-toggle .badge {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        h2, h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: var(--radius);
+            margin-top: 12px;
+            transition: 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent-color);
+            outline: none;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .danger-btn {
+            background-color: var(--danger-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px;
+            text-align: center;
+        }
+
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .badge.admin {
+            background-color: #c62828;
+        }
+
+        .badge.user {
+            background-color: var(--primary-color);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            background-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="header-left">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="UBCI Logo">
+        <h2>UBCI – Gestion des Utilisateurs</h2>
+    </div>
+    <div class="user-toggle">
+        <i class="fas fa-user-circle"></i> {{ username }}
+        <span class="badge {{ role }}">{{ role }}</span>
+        <a href="{{ url_for('logout.logout_user') }}" style="color: var(--primary-color); font-weight: 600;">Déconnexion</a>
+    </div>
+</header>
+<div class="container">
+    <h2><i class="fas fa-users-cog"></i> Ajouter un utilisateur</h2>
+    <form method="POST">
+        <input type="hidden" name="action" value="add">
+        <input type="text" name="name" placeholder="Nom complet" required>
+        <input type="text" name="username" placeholder="Nom d'utilisateur" required>
+        <input type="email" name="email" placeholder="Adresse e-mail" required>
+        <input type="password" name="password" placeholder="Mot de passe" required>
+        <select name="role" required>
+            <option value="">Sélectionner un rôle</option>
+            <option value="user">Utilisateur</option>
+            <option value="admin">Administrateur</option>
+        </select>
+        <button type="submit"><i class="fas fa-user-plus"></i> Ajouter</button>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="mt-4">
+              {% for category, msg in messages %}
+                <div class="rounded p-3 mt-2 {% if category == 'error' %}bg-red-100 text-red-700{% elif category == 'success' %}bg-green-100 text-green-700{% endif %}">
+                  {{ msg }}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+    </form>
+    <h3><i class="fas fa-list"></i> Liste des utilisateurs</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Rôle</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user, info in users.items() %}
+            <tr>
+                <td>{{ user }}</td>
+                <td><span class="badge {{ info.role }}">{{ info.role }}</span></td>
+                <td>
+                    {% if user != 'admin' %}
+                        <form method="POST" style="display:inline; margin-bottom: 10px;">
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="username" value="{{ user }}">
+                            <button type="submit" class="danger-btn"><i class="fas fa-trash"></i> Supprimer</button>
+                        </form>
+                        <form method="POST" style="margin-top: 10px;">
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" name="username" value="{{ user }}">
+                            <input type="text" name="name" value="{{ info.name }}" placeholder="Nom" required>
+                            <input type="email" name="email" value="{{ info.email }}" placeholder="Email" required>
+                            <select name="role" required>
+                            <option value="">Sélectionner un rôle</option>
+                            <option value="user" {{ 'selected' if info.role == 'user' else '' }}>Utilisateur</option>
+                            <option value="admin" {{ 'selected' if info.role == 'admin' else '' }}>Administrateur</option>
+                            </select>
+                            <input type="password" name="password" placeholder="Mot de passe (laisser vide si inchangé)">
+                            <button type="submit" class="mt-2"><i class="fas fa-pen"></i> Modifier</button>
+                        </form>
+                    {% else %}
+                        <i class="fas fa-lock" title="Admin principal non supprimable"></i>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('dashboard.dashboard_user') }}" class="back-link">
+        <i class="fas fa-home"></i> Retour au dashboard
+    </a>
+</div>
+</body>
+</html>

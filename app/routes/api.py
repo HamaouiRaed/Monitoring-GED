@@ -2,11 +2,14 @@ from flask import Blueprint, jsonify, request
 from app.models.user import User
 from app import db
 import jwt
-from datetime import datetime, timedelta
 from config import Config
 from functools import wraps
 from app.controllers import base_controller as base_ctrl
 from app.controllers import domaine_controller as domaine_ctrl
+import os
+import re
+
+
 
 api = Blueprint('api', __name__)
 
@@ -217,3 +220,56 @@ def count_active_domaines_route():
 @api.route('/api/domaines/inactive/count', methods=['GET'])
 def count_inactive_domaines_route():
     return jsonify({"inactive_count": domaine_ctrl.count_inactive_domaines()})
+
+from app.routes.documents_archives import get_total_documents_from_journal_dir  # ✅ Correct
+@api.route('/api/documents/count', methods=['GET'])
+def get_documents_count():
+    logs_dir = os.path.join(os.getcwd(), 'logs')
+    total = get_total_documents_from_journal_dir(logs_dir)
+    return jsonify({'documentsCount': total})
+@api.route('/api/fusion-table', methods=['GET'])
+def get_fusion_summary():
+    logs_dir = os.path.join(os.getcwd(), "logs")
+    result = []
+
+    for file in os.listdir(logs_dir):
+        if file.lower().startswith("journal") and file.endswith((".log", ".txt")):
+            path = os.path.join(logs_dir, file)
+            date, base = "", ""
+            total_files = 0
+            error_message = "Pas d'erreur"
+
+            try:
+                with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+                    lines = f.readlines()
+
+                for line in lines:
+                    if m := re.search(r'Date actuelle\s*:\s*(\d{8})', line):
+                        date = f"{m.group(1)[:4]}-{m.group(1)[4:6]}-{m.group(1)[6:]}"
+                    elif m := re.search(r'Nom de base des lots\s*:\s*(\S+)', line):
+                        base = m.group(1)
+                    elif m := re.search(r'Nombre total de fichiers traités\s*:\s*(\d+)', line):
+                        total_files = int(m.group(1))
+                    elif "[ERREUR]" in line:
+                        status = "Échec"
+                        error_message = line.strip()
+
+                result.append({
+                    "date": date or "-",
+                    "base": base or "-",
+                    "fichiers": total_files,
+                    "erreur": error_message
+                })
+
+            except Exception as e:
+                result.append({
+                    "date": "-",
+                    "base": file,
+                    "fichiers": 0,
+                    "erreur": str(e)
+                })
+
+    return jsonify(result)
+
+
+

@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Dashboard{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 🔐 Anti-cache navigateur -->
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -17,56 +22,87 @@
         {% include 'layout/sidebar.html' %}
 
         <main class="flex-1 p-6">
-            {% include 'layout/cards.html' %}
-
-            <!-- Hidden sections to toggle -->
-            <div id="basesTable" class="hidden shadow-lg bg-white p-4 rounded-md mt-4">
-                {% include 'layout/basesTable.html' %}
-            </div>
-
-            <div id="domainesTable" class="hidden shadow-lg bg-white p-4 rounded-md mt-4">
-                {% include 'layout/domainesTable.html' %}
-            </div>
-
-            <div id="usersTable" class="hidden shadow-lg bg-white p-4 rounded-md mt-4">
-                {% include 'layout/usersTable.html' %}
-            </div>
+            {% block content %}{% endblock %}
         </main>
+
+                <div id="chart" class="hidden shadow-lg bg-white p-4 rounded-md mt-4">
+
+        {% include 'layout/pie_chart.html' %}
+                </div>
+        <!-- Hidden sections to toggle -->
+        <div id="basesTable" class="hidden shadow-lg bg-white p-4 rounded-md mt-4">
+            {% include 'layout/basesTable.html' %}
+        </div>
+
+        <div id="domainesTable" class="hidden shadow-lg bg-white p-4 rounded-md mt-4">
+            {% include 'layout/domainesTable.html' %}
+        </div>
+
+        <div id="usersTable" class="hidden shadow-lg bg-white p-4 rounded-md mt-4">
+            {% include 'layout/usersTable.html' %}
+        </div>
     </div>
 
     {% include 'layout/footer.html' %}
 
     <script>
+        // 👉 Affichage dynamique des tableaux
         document.addEventListener("DOMContentLoaded", () => {
             const cardTableMap = {
                 basesCard: 'basesTable',
                 domainesCard: 'domainesTable',
-                UsersCard: 'usersTable'
+                UsersCard: 'usersTable',
+                  chart: 'chart',
+
             };
-    
+
             Object.entries(cardTableMap).forEach(([cardId, tableId]) => {
                 const card = document.getElementById(cardId);
                 const table = document.getElementById(tableId);
-    
-                card.addEventListener('click', () => {
-                    // Hide all tables
-                    Object.values(cardTableMap).forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el && !el.classList.contains('hidden')) {
-                            el.classList.add('hidden');
+
+                if (card) {
+                    card.addEventListener('click', () => {
+                        // Cacher tous les tableaux
+                        Object.values(cardTableMap).forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el && !el.classList.contains('hidden')) {
+                                el.classList.add('hidden');
+                            }
+                        });
+                        // Afficher le tableau lié à la tuile
+                        if (table) {
+                            table.classList.remove('hidden');
                         }
                     });
-    
-                    // Show the clicked card's table
-                    if (table) {
-                        table.classList.remove('hidden');
-                    }
-                });
+                }
             });
         });
     </script>
-    
+
+    <script>
+        // ✅ Logout propre : vide sessionStorage puis redirige
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = "/logout";
+        }
+
+        // 🛑 Bloque le retour arrière après logout
+        window.addEventListener("pageshow", function (event) {
+            const isLoginPage = location.pathname.includes("/login");
+            const user = sessionStorage.getItem("user");
+
+            if (!user && !isLoginPage) {
+                console.warn("Retour bloqué : pas de session active.");
+                window.location.href = "/login";
+            }
+        });
+
+        // 🧠 Forcer l'historique à ignorer les pages précédentes
+        window.history.pushState(null, "", window.location.href);
+        window.onpopstate = function () {
+            window.history.pushState(null, "", window.location.href);
+        };
+    </script>
 
 </body>
-
 </html>

@@ -1,0 +1,64 @@
+[INFO] Début du processus de fusion des fichiers PDF...
+[INFO] Répertoire source : D:\SPOOLS\DIR16\merge\TTN
+[INFO] Répertoire de sortie : D:\SPOOLS\DIR16\merge\TTN\merged_pdf
+[INFO] Répertoire de déplacement : D:\SPOOLS\DIR16
+[INFO] Nom de base des lots : TTN_11
+[INFO] Taille des lots : 500
+[INFO] Date actuelle : 20250512
+[INFO] Fusion du lot 1... 
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+[INFO] Lot 1 fusionné avec succès : D:\SPOOLS\DIR16\merge\TTN\merged_pdf\TTN_11_20250512_lot1.pdf 
+[INFO] Déplacement des fichiers fusionnés dans "D:\SPOOLS\DIR16"... 
+D:\SPOOLS\DIR16\merge\TTN\merged_pdf\TTN_11_20250512_lot1.pdf
+        1 fichier(s) déplacé(s).
+[INFO] Tous les fichiers fusionnés ont été déplacés avec succès dans "D:\SPOOLS\DIR16". 
+[INFO] Suppression des fichiers source dans "D:\SPOOLS\DIR16\merge\TTN"... 
+[INFO] Tous les fichiers source ont été supprimés avec succès. 
+[INFO] Nombre total de fichiers traités : 47
+[INFO] Processus de fusion terminé avec succès.

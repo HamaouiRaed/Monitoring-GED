@@ -11,3 +11,7 @@ def index():
 def login():
     # Render the login page template
     return render_template("login.html")
+@main.route('/unauthorized')
+def unauthorized():
+    return render_template('unauthorized.html')
+

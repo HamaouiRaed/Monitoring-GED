@@ -1,10 +1,12 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_login import current_user, login_required
 from app import db
-from app.models import User
+from app.models.user import User
+import os
+from .decorators import admin_required
+
 
 user_bp = Blueprint('users', __name__)
-
 
 # ------------------------ Register ------------------------
 
@@ -38,36 +40,47 @@ def register():
 
 # ------------------------ View All Users ------------------------
 
-@user_bp.route('/admin/users', methods=['GET'])
+@user_bp.route('/admin/users', methods=['GET'], endpoint='view_users')
 @login_required
 def view_users():
+    if session.get("role") != "admin":
+        flash("Accès refusé.", "danger")
+        return redirect(url_for("main.unauthorized"))
     users = User.query.all()
     return render_template('admin/view_users.html', users=users)
-
 
 # ------------------------ Count Users ------------------------
 
 @user_bp.route('/admin/users/count', methods=['GET'])
 @login_required
 def count_users():
+    if session.get("role") != "admin":
+        flash("Accès refusé.", "danger")
+        return redirect(url_for("main.unauthorized"))
     count = User.query.count()
     return jsonify({'user_count': count})
 
-
 # ------------------------ View Single User ------------------------
 
-@user_bp.route('/user/<int:id>', methods=['GET'])
+@user_bp.route('/admin/users', methods=['GET'], endpoint='view_users')
 @login_required
+@admin_required
 def view_user(id):
+    if session.get("role") != "admin":
+        flash("Accès refusé.", "danger")
+        return redirect(url_for("main.unauthorized"))
     user = User.query.get_or_404(id)
     return render_template('admin/view_user.html', user=user)
-
 
 # ------------------------ Edit User ------------------------
 
 @user_bp.route('/user/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def edit_user(id):
+    if session.get("role") != "admin":
+        flash("Accès refusé.", "danger")
+        return redirect(url_for("main.unauthorized"))
     user = User.query.get_or_404(id)
 
     if request.method == 'POST':
@@ -84,12 +97,15 @@ def edit_user(id):
 
     return render_template('admin/edit_user.html', user=user)
 
-
 # ------------------------ Delete User ------------------------
 
 @user_bp.route('/user/<int:id>/delete', methods=['POST'])
 @login_required
+@admin_required
 def delete_user(id):
+    if session.get("role") != "admin":
+        flash("Accès refusé.", "danger")
+        return redirect(url_for("main.unauthorized"))
     user = User.query.get_or_404(id)
 
     if user.id == current_user.id:
@@ -100,3 +116,74 @@ def delete_user(id):
     db.session.commit()
     flash("User deleted successfully!", 'success')
     return redirect(url_for('users.view_users'))
+
+# ------------------------ Manage Users ------------------------
+
+@user_bp.route("/admin/manage_users", methods=["GET", "POST"])
+@login_required
+@admin_required
+def manage_users():
+    if session.get("role") != "admin":
+        flash("Accès refusé.", "danger")
+        return redirect(url_for("main.unauthorized"))
+
+    message = ""
+    if request.method == "POST":
+        action = request.form["action"]
+        username = request.form["username"].strip()
+
+        if action == "add":
+            password = request.form["password"].strip()
+            role = request.form["role"].strip()
+            email = request.form.get("email", "").strip()
+            name = request.form.get("name", "").strip()
+
+            if User.query.filter_by(username=username).first():
+                message = f"Le nom d'utilisateur {username} existe déjà."
+            else:
+                new_user = User(name=name, username=username, email=email, role=role)
+                new_user.set_password(password)
+                db.session.add(new_user)
+                db.session.commit()
+                message = f"Utilisateur {username} ajouté."
+
+        elif action == "delete":
+            user = User.query.filter_by(username=username).first()
+            if user:
+                if user.username == "admin":
+                    message = "Impossible de supprimer l'utilisateur admin."
+                else:
+                    db.session.delete(user)
+                    db.session.commit()
+                    message = f"Utilisateur {username} supprimé."
+
+    users = User.query.all()
+    return render_template("manage_users.html", users=users, message=message)
+
+# ------------------------ Manage Files ------------------------
+
+@user_bp.route("/admin/manage_files", methods=["GET", "POST"])
+@login_required
+@admin_required
+def manage_files():
+    if session.get("role") != "admin":
+        flash("Accès refusé.", "danger")
+        return redirect(url_for("main.unauthorized"))
+
+    message = ""
+    files_dir = os.getcwd()
+    files = os.listdir(files_dir)
+
+    if request.method == "POST":
+        if "file_upload" in request.files:
+            file = request.files["file_upload"]
+            file.save(os.path.join(files_dir, file.filename))
+            message = f"Fichier {file.filename} uploadé avec succès."
+        elif "delete_file" in request.form:
+            file_to_delete = request.form["delete_file"]
+            file_path = os.path.join(files_dir, file_to_delete)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                message = f"Fichier {file_to_delete} supprimé avec succès."
+
+    return render_template("manage_files.html", files=files, message=message)

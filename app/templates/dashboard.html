@@ -1,12 +1,12 @@
-{% extends 'layout/base.html' %}
+{% extends "layout/base.html" %}
 
 {% block title %}Dashboard{% endblock %}
 
+
 {% block content %}
-<div>
-    <h2 class="text-2xl font-semibold mb-4">Bienvenue, {{ user.username }}</h2>
-    <p>Rôle : <strong>{{ user.role }}</strong></p>
-</div>
+ <main class="flex-1 p-6">
+     {% include 'layout/cards.html' %}
+
 <script>
     function logout() {
         fetch('/logout')
@@ -18,3 +18,4 @@
     }
 </script>
 {% endblock %}
+ </main>

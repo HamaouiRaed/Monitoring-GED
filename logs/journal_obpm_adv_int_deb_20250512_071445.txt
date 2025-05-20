@@ -1,0 +1,20 @@
+[INFO] Début du processus de fusion des fichiers PDF...
+[INFO] Répertoire source : D:\SPOOLS\DIR16\merge\obpm_advice_international_debit
+[INFO] Répertoire de sortie : D:\SPOOLS\DIR16\merge\obpm_advice_international_debit\merged_pdf
+[INFO] Répertoire de déplacement : D:\SPOOLS\dir16
+[INFO] Nom de base des lots : obpm_adv_int_deb
+[INFO] Taille des lots : 500
+[INFO] Date actuelle : 20250512
+[INFO] Fusion du lot 1... 
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+[INFO] Lot 1 fusionné avec succès : D:\SPOOLS\DIR16\merge\obpm_advice_international_debit\merged_pdf\obpm_adv_int_deb_20250512_lot1.pdf 
+[INFO] Déplacement des fichiers fusionnés dans "D:\SPOOLS\dir16"... 
+D:\SPOOLS\DIR16\merge\obpm_advice_international_debit\merged_pdf\obpm_adv_int_deb_20250512_lot1.pdf
+        1 fichier(s) déplacé(s).
+[INFO] Tous les fichiers fusionnés ont été déplacés avec succès dans "D:\SPOOLS\dir16". 
+[INFO] Suppression des fichiers source dans "D:\SPOOLS\DIR16\merge\obpm_advice_international_debit"... 
+[INFO] Tous les fichiers source ont été supprimés avec succès. 
+[INFO] Nombre total de fichiers traités : 3
+[INFO] Processus de fusion terminé avec succès.

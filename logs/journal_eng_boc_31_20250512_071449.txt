@@ -1,0 +1,43 @@
+[INFO] Début du processus de fusion des fichiers PDF...
+[INFO] Répertoire source : D:\SPOOLS\DIR14\merge\eng_boc_31
+[INFO] Répertoire de sortie : D:\SPOOLS\DIR13\merge\eng_boc_31\merged_pdf
+[INFO] Répertoire de déplacement : D:\SPOOLS\DIR14
+[INFO] Nom de base des lots : eng_boc_31
+[INFO] Taille des lots : 500
+[INFO] Date actuelle : 20250512
+[INFO] Fusion du lot 1... 
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+   **** Warning: File has some garbage before %PDF- .
+[INFO] Lot 1 fusionné avec succès : D:\SPOOLS\DIR13\merge\eng_boc_31\merged_pdf\eng_boc_31_20250512_lot1.pdf 
+[INFO] Déplacement des fichiers fusionnés dans "D:\SPOOLS\DIR14"... 
+D:\SPOOLS\DIR13\merge\eng_boc_31\merged_pdf\eng_boc_31_20250512_lot1.pdf
+        1 fichier(s) déplacé(s).
+[INFO] Tous les fichiers fusionnés ont été déplacés avec succès dans "D:\SPOOLS\DIR14". 
+[INFO] Suppression des fichiers source dans "D:\SPOOLS\DIR14\merge\eng_boc_31"... 
+[INFO] Tous les fichiers source ont été supprimés avec succès. 
+[INFO] Nombre total de fichiers traités : 26
+[INFO] Processus de fusion terminé avec succès.

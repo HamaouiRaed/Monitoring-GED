@@ -1,0 +1,177 @@
+<div class="pie-chart-section">
+    <form id="pieForm" class="pie-form" onsubmit="return updatePieChart();">
+        <h3 class="pie-title"><i class="fa fa-chart-pie"></i> Répartition des Documents Archivés</h3>
+        <div class="date-filters">
+            <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+            <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+            <button type="submit" id="refreshBtn" class="refresh-btn">
+                <i id="refreshIcon" class="fa fa-sync"></i> Actualiser
+            </button>
+        </div>
+    </form>
+
+   <div id="chartContainer" style="margin-top: 30px;">
+    <canvas id="pieChart" style="width: 100%; height: 600px; max-width: 1000px; margin: auto;"></canvas>
+</div>
+
+    <p id="noDataMessage" style="text-align: center; margin-top: 20px; display: none;">
+        <i class="fa fa-exclamation-triangle"></i> Aucun document archivé pour cette période.
+    </p>
+</div>
+
+<!-- DATATABLE OPTIONNEL -->
+<div class="datatable-section" style="margin-top: 50px; display: none;" id="datatableBlock">
+    <h3 style="text-align: center;">📋 Détail par Base</h3>
+    <table id="documentsTable" class="display" style="width:100%; margin-top: 20px;">
+        <thead>
+            <tr>
+                <th>Base</th>
+                <th>Nombre de Documents</th>
+            </tr>
+        </thead>
+        <tbody id="datatableBody">
+            <!-- Ajouté dynamiquement en JS -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+let pieChart = null;
+
+document.addEventListener("DOMContentLoaded", () => {
+    updatePieChart(); // appel initial automatique
+});
+
+function updatePieChart() {
+    const startDate = document.getElementById('start_date').value;
+    const endDate = document.getElementById('end_date').value;
+    const refreshIcon = document.getElementById('refreshIcon');
+
+    refreshIcon.classList.add('fa-spin');
+
+    fetch('/update_pie', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ start_date: startDate, end_date: endDate })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("📊 Données reçues :", data);
+
+        if (pieChart) pieChart.destroy();
+
+        const chartCanvas = document.getElementById('pieChart');
+        const noDataMsg = document.getElementById('noDataMessage');
+        const datatable = document.getElementById('datatableBlock');
+        const datatableBody = document.getElementById('datatableBody');
+
+        datatableBody.innerHTML = "";
+
+        if (!data.labels || data.labels.length === 0) {
+            chartCanvas.style.display = 'none';
+            noDataMsg.style.display = 'block';
+            datatable.style.display = 'none';
+            return;
+        }
+
+        chartCanvas.style.display = 'block';
+        noDataMsg.style.display = 'none';
+        datatable.style.display = 'block';
+
+        const ctx = chartCanvas.getContext('2d');
+        const labels = data.labels.map((label, i) => `${label} (${data.values[i]})`);
+
+        pieChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Documents archivés',
+            data: data.values,
+            backgroundColor: [
+                '#6C5CE7', '#00CEC9', '#FAB1A0', '#55EFC4', '#FF7675',
+                '#81ECEC', '#FFEAA7', '#A29BFE', '#FD79A8', '#74B9FF',
+                '#E17055', '#B2BEC3', '#636E72', '#FDCB6E', '#E84393',
+                '#0984E3', '#D63031', '#00B894', '#F1C40F', '#7F8C8D'
+            ],
+            borderColor: '#ffffff',
+            borderWidth: 1,
+            barPercentage: 0.7,
+            categoryPercentage: 0.6
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'x',
+        plugins: {
+            title: {
+                display: true,
+                text: 'Répartition des documents archivés',
+                font: {
+                    size: 16
+                }
+            },
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return context.parsed.y.toLocaleString("fr-FR") + " documents";
+                    }
+                }
+            }
+        },
+scales: {
+    x: {
+        ticks: {
+            autoSkip: true,
+            maxRotation: 45,
+            minRotation: 45
+        }
+    },
+    y: {
+        type: 'logarithmic',
+        ticks: {
+            autoSkip: true,
+            callback: function(value) {
+                return value.toLocaleString("fr-FR");
+            }
+        }
+    }
+}
+    }
+});
+
+        // Remplir la table
+        data.labels.forEach((label, i) => {
+            const row = `<tr><td>${label}</td><td>${data.values[i]}</td></tr>`;
+            datatableBody.insertAdjacentHTML('beforeend', row);
+        });
+
+        if ($.fn.DataTable.isDataTable('#documentsTable')) {
+            $('#documentsTable').DataTable().clear().destroy();
+        }
+
+        $('#documentsTable').DataTable({
+            paging: true,
+            searching: true,
+            pageLength: 10,
+            order: [[1, 'desc']],
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json' }
+        });
+    })
+    .catch(error => {
+        console.error("❌ Erreur lors du chargement du pie chart :", error);
+    })
+    .finally(() => {
+        refreshIcon.classList.remove('fa-spin');
+    });
+
+    return false;
+}
+</script>
